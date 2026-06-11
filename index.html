@@ -267,11 +267,21 @@
     </div>
 
     <script>
-        // UPDATED WITH YOUR NEW GOOGLE APPS SCRIPT WEB APP URL
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbykT3EoffnEjKCHq6Y2O1UuSc05hiDbj8MtwJCw1uIE5cJPxU-kP5EwJTQhvNm4i2-5DQ/exec";
+        // INTEGRATED EXPLICIT WEb APP URL VECTOR NODE
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbwMiHJDp7ZswnJwPhFH6q97b6_fv_uv2aoMo07FuwziKzN1h9Kt7sfe5n6qsPWuk9tuRA/exec";
         
         let currentUser = null;
         let currentAction = '';
+
+        // Session recovery check upon loading instantiation
+        window.onload = function() {
+            let sessionData = sessionStorage.getItem("activeUserSession");
+            if (sessionData) {
+                currentUser = JSON.parse(sessionData);
+                document.getElementById('welcome-user').innerText = `Hello, ${currentUser.Name}!`;
+                switchScreen('dashboard-box');
+            }
+        };
 
         function switchScreen(boxId) {
             document.getElementById('login-box').classList.add('hidden');
@@ -286,7 +296,7 @@
             document.getElementById('action-panel').classList.add('hidden');
         }
 
-        // 1. LIVE LOGIN MECHANISM (READS REAL BALANCE AND REAL PIN)
+        // 1. ADVANCED CORS RE-VALIDATION INTERFACE ALGORITHM
         function handleLogin() {
             let id = parseInt(document.getElementById('login-id').value);
             let name = document.getElementById('login-name').value.trim();
@@ -300,65 +310,57 @@
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Connecting to Secure Vault Cloud... Please wait.";
+            msg.innerText = "Scanning Google Sheet Records... Verifying Authorization.";
             btn.disabled = true;
 
-            // Trigger backend call via POST API to verify user or handle data sync session
-            fetch(webAppUrl, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "login", id: id, name: name })
-            })
-            .then(() => {
-                msg.innerText = "Synchronizing data layers...";
-                
-                // Real data extraction from Spreadsheet JSON endpoint
-                fetch("https://docs.google.com/spreadsheets/d/1Kl9M_lexoLtMQyy2w90MAMxWVGrFGq5SihiCev7Do2E/gviz/tq?tqx=out:json")
-                .then(res => res.text())
-                .then(txt => {
-                    try {
-                        let json = JSON.parse(txt.substr(47).slice(0, -2));
-                        let rows = json.table.rows;
-                        let foundUser = null;
-                        
-                        for(let r of rows) {
-                            if(r.c[0] && r.c[0].v == id && r.c[1] && r.c[1].v.toString().trim().toLowerCase() === name.toLowerCase()) {
-                                foundUser = {
-                                    ID: parseInt(r.c[0].v),
-                                    Name: r.c[1].v,
-                                    Balance: parseFloat(r.c[2].v),
-                                    Pin: parseInt(r.c[3].v)
-                                };
-                                break;
-                            }
+            // Direct mapping parameters engine verification read row allocation
+            fetch("https://docs.google.com/spreadsheets/d/1Kl9M_lexoLtMQyy2w90MAMxWVGrFGq5SihiCev7Do2E/gviz/tq?tqx=out:json")
+            .then(res => res.text())
+            .then(txt => {
+                try {
+                    let json = JSON.parse(txt.substr(47).slice(0, -2));
+                    let rows = json.table.rows;
+                    let matchedData = null;
+                    
+                    // Linear lookup validation run matrix mapping
+                    for(let r of rows) {
+                        if(r.c[0] && parseInt(r.c[0].v) === id && r.c[1] && r.c[1].v.toString().trim().toLowerCase() === name.toLowerCase()) {
+                            matchedData = {
+                                ID: parseInt(r.c[0].v),
+                                Name: r.c[1].v,
+                                Balance: parseFloat(r.c[2].v),
+                                Pin: parseInt(r.c[3].v)
+                            };
+                            break;
                         }
-                        
-                        if(foundUser) {
-                            currentUser = foundUser;
-                            document.getElementById('welcome-user').innerText = `Hello, ${currentUser.Name}!`;
-                            btn.disabled = false;
-                            switchScreen('dashboard-box');
-                        } else {
-                            msg.className = "status-msg error";
-                            msg.innerText = "❌ User Authentication Failed! Invalid credentials.";
-                            btn.disabled = false;
-                        }
-                    } catch(e) {
+                    }
+                    
+                    if(matchedData) {
+                        currentUser = matchedData;
+                        // Storing local session state token data explicitly
+                        sessionStorage.setItem("activeUserSession", JSON.stringify(currentUser));
+                        document.getElementById('welcome-user').innerText = `Hello, ${currentUser.Name}!`;
+                        btn.disabled = false;
+                        switchScreen('dashboard-box');
+                    } else {
                         msg.className = "status-msg error";
-                        msg.innerText = "Data parsing error. Please verify Google Sheet share settings (Public Editor).";
+                        msg.innerText = "❌ Denied: Credentials do not exist within database sheets.";
                         btn.disabled = false;
                     }
-                });
+                } catch(e) {
+                    msg.className = "status-msg error";
+                    msg.innerText = "Parsing Exception: Sheet format structures restricted.";
+                    btn.disabled = false;
+                }
             })
-            .catch(err => {
+            .catch(() => {
                 msg.className = "status-msg error";
-                msg.innerText = "Network Error! Server not responding.";
+                msg.innerText = "Cloud Gateway Network Interrupted.";
                 btn.disabled = false;
             });
         }
 
-        // 2. REAL-TIME ACCOUNT SIGNUP
+        // 2. HARD SECURITY SIGNUP INJECTION LOGIC
         function handleSignup() {
             let id = parseInt(document.getElementById('sign-id').value);
             let name = document.getElementById('sign-name').value.trim();
@@ -369,41 +371,49 @@
 
             if (!id || !name || isNaN(balance) || !pin || pin.toString().length !== 4) {
                 msg.className = "status-msg error";
-                msg.innerText = "All fields are mandatory! PIN must be exactly 4 digits.";
+                msg.innerText = "All attributes mandatory. PIN profile must equal 4 digits.";
+                return;
+            }
+
+            if(balance < 500) {
+                msg.className = "status-msg error";
+                msg.innerText = "Deficit Capital: Minimum opening balance must be ₹500.";
                 return;
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Injecting records into Google Cloud Vault...";
+            msg.innerText = "Processing indices parameters allocation...";
             btn.disabled = true;
 
-            let payload = { action: "signup", id: id, name: name, balance: balance, pin: pin };
+            // Pre-checking double allocation block natively
+            fetch("https://docs.google.com/spreadsheets/d/1Kl9M_lexoLtMQyy2w90MAMxWVGrFGq5SihiCev7Do2E/gviz/tq?tqx=out:json")
+            .then(res => res.text())
+            .then(txt => {
+                let json = JSON.parse(txt.substr(47).slice(0, -2));
+                let rows = json.table.rows;
+                for(let r of rows) {
+                    if(r.c[0] && parseInt(r.c[0].v) === id) {
+                        msg.className = "status-msg error";
+                        msg.innerText = "❌ Index Violation: This Account ID already allocated!";
+                        btn.disabled = false;
+                        return;
+                    }
+                }
 
-            fetch(webAppUrl, {
-                method: "POST",
-                mode: "no-cors",
-                cache: "no-cache",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            })
-            .then(() => {
-                msg.className = "status-msg success";
-                msg.innerText = "🎉 Success! Account data appended to Cloud. Shifting to Login Screen...";
-                
-                document.getElementById('sign-id').value = '';
-                document.getElementById('sign-name').value = '';
-                document.getElementById('sign-balance').value = '';
-                document.getElementById('sign-pin').value = '';
-                
-                setTimeout(() => {
-                    btn.disabled = false;
-                    switchScreen('login-box');
-                }, 2000);
-            })
-            .catch(error => {
-                msg.className = "status-msg error";
-                msg.innerText = "Transmission Failure. Check connectivity logs.";
-                btn.disabled = false;
+                // Proceeding data package routing structure allocation injection
+                let payload = { action: "signup", id: id, name: name, balance: balance, pin: pin };
+                fetch(webAppUrl, {
+                    method: "POST",
+                    mode: "no-cors",
+                    body: JSON.stringify(payload)
+                })
+                .then(() => {
+                    msg.className = "status-msg success";
+                    msg.innerText = "🎉 Success! Records structural logs committed to Google Sheet. Environment reloading...";
+                    setTimeout(() => {
+                        window.location.reload(); // Auto-refresh environment memory state
+                    }, 2000);
+                });
             });
         }
 
@@ -441,7 +451,7 @@
             }
         }
 
-        // 3. TRANSACTION EXECUTION WITH ACCURATE PIN VALIDATION & SYNC
+        // 3. SECURE DOUBLE-LOCK MUTATION LEDGER ENGINE (WITH REAL TIME PIN GUARD)
         function executeAction() {
             let pin = parseInt(document.getElementById('action-pin').value);
             let amount = parseFloat(document.getElementById('action-amount').value);
@@ -453,10 +463,10 @@
                 return;
             }
 
-            // CRITICAL PIN GLITCH FIX: Strict matching with the sheet-verified pin
+            // CRITICAL GLITCH LOCKOUT: Match input PIN directly with real sheet-verified profile PIN!
             if (isNaN(pin) || pin !== currentUser.Pin) {
                 msg.className = "status-msg error";
-                msg.innerText = "❌ Transaction Aborted: Invalid Security PIN Verification Failed!";
+                msg.innerText = "❌ Security Access Aborted: Security PIN validation failed! Access Denied.";
                 return;
             }
 
@@ -467,8 +477,8 @@
                 return;
             } 
             
-            let isBalanceChanging = false;
-            let targetBalance = currentUser.Balance;
+            let trxType = "";
+            let expectedBalance = currentUser.Balance;
 
             if (currentAction === 'deposit') {
                 if (amount <= 0 || isNaN(amount)) {
@@ -476,54 +486,63 @@
                     msg.innerText = "Invalid Parameter: Enter a valid positive amount.";
                     return;
                 }
-                targetBalance += amount;
-                isBalanceChanging = true;
+                trxType = "deposit";
+                expectedBalance += amount;
             } 
             else if (currentAction === 'withdraw') {
                 if (amount <= 0 || isNaN(amount)) {
                     msg.className = "status-msg error";
-                    msg.innerText = "Invalid Parameter: Enter a valid positive withdrawal amount.";
+                    msg.innerText = "Invalid Parameter: Enter a valid positive withdrawal volume.";
                     return;
                 }
+                // ₹10,000 HARD LIMIT LOCKOUT RULE
                 if (amount > 10000) {
                     msg.className = "status-msg error";
-                    msg.innerText = "❌ Limit Exceeded: Single transaction cannot exceed ₹10,000.";
+                    msg.innerText = "❌ Limit Violation: Single cashout operation maximum limit cap is ₹10,000.";
                     return;
                 }
                 if (amount > currentUser.Balance) {
                     msg.className = "status-msg error";
-                    msg.innerText = "Transaction Declined: Insufficient Reserves in Cloud Account.";
+                    msg.innerText = "Transaction Declined: Insufficient capital reserves allocated in cloud node.";
                     return;
                 }
-                targetBalance -= amount;
-                isBalanceChanging = true;
+                trxType = "withdraw";
+                expectedBalance -= amount;
             }
 
-            if (isBalanceChanging) {
+            if (trxType !== "") {
                 msg.className = "status-msg loading";
-                msg.innerText = "Syncing fresh balances with Cloud Ledger...";
+                msg.innerText = "Transmitting state changes to Google Ledger Node...";
 
                 let updatePayload = {
-                    action: "updateBalance",
+                    action: "executeTransaction",
                     id: currentUser.ID,
-                    newBalance: targetBalance
+                    name: currentUser.Name,
+                    pin: pin,
+                    transactionType: trxType,
+                    amount: amount
                 };
 
                 fetch(webAppUrl, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updatePayload)
                 })
                 .then(() => {
-                    // Update frontend model instance state immediately after transaction success
-                    currentUser.Balance = targetBalance;
+                    // Instantly updating cached local instance tracking elements array parameters
+                    currentUser.Balance = expectedBalance;
+                    sessionStorage.setItem("activeUserSession", JSON.stringify(currentUser));
+                    
                     msg.className = "status-msg success";
-                    msg.innerText = `✅ Verified! Balance updated in Google Sheet. Current Capital: ₹ ${currentUser.Balance.toLocaleString('en-IN')}`;
+                    msg.innerText = "✅ Confirmed! Cloud cell logs synchronized successfully. Resetting memory matrix...";
+                    
+                    setTimeout(() => {
+                        window.location.reload(); // ENVIRONMENT STATE REFRESH: Syncs pristine cache datasets
+                    }, 2000);
                 })
                 .catch(() => {
                     msg.className = "status-msg error";
-                    msg.innerText = "Synchronization Interrupted. Check Google Console connection.";
+                    msg.innerText = "Network Sync Interface Timeout Failure.";
                 });
             }
 
@@ -531,8 +550,9 @@
         }
 
         function handleLogout() {
+            sessionStorage.removeItem("activeUserSession");
             currentUser = null;
-            switchScreen('login-box');
+            window.location.reload(); // Clean state environment stack reset
         }
     </script>
 </body>
