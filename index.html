@@ -113,7 +113,6 @@
         .hidden {
             display: none !important;
         }
-        /* Dashboard Services Grid */
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -143,7 +142,6 @@
         .error { color: #e74c3c; }
         .loading { color: #f1c40f; }
 
-        /* Modern Premium Footer/About Card Layout */
         .premium-footer {
             margin-top: 30px;
             width: 100%;
@@ -269,10 +267,9 @@
     </div>
 
     <script>
-        // Google Web App URL Integration
-        const webAppUrl = "https://script.google.com/macros/s/AKfycbxOmoMV27No51LOg8wDKFHFZt-ivFRB_dnIdPehzxY3CfhelfHZzVqnxVx5vZ03hQ1Y7Q/exec";
+        // UPDATED WITH YOUR NEW GOOGLE APPS SCRIPT WEB APP URL
+        const webAppUrl = "https://script.google.com/macros/s/AKfycbykT3EoffnEjKCHq6Y2O1UuSc05hiDbj8MtwJCw1uIE5cJPxU-kP5EwJTQhvNm4i2-5DQ/exec";
         
-        // State Machine Cache
         let currentUser = null;
         let currentAction = '';
 
@@ -289,7 +286,7 @@
             document.getElementById('action-panel').classList.add('hidden');
         }
 
-        // 1. LOGIN ENGINE
+        // 1. LIVE LOGIN MECHANISM (READS REAL BALANCE AND REAL PIN)
         function handleLogin() {
             let id = parseInt(document.getElementById('login-id').value);
             let name = document.getElementById('login-name').value.trim();
@@ -303,37 +300,65 @@
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Connecting to Google Cloud Vault... Please wait.";
+            msg.innerText = "Connecting to Secure Vault Cloud... Please wait.";
             btn.disabled = true;
 
-            // Sheet fallback structure routing table
+            // Trigger backend call via POST API to verify user or handle data sync session
             fetch(webAppUrl, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "getUsers" })
+                body: JSON.stringify({ action: "login", id: id, name: name })
             })
             .then(() => {
-                msg.className = "status-msg loading";
-                msg.innerText = "Authenticating cryptokeys...";
-
-                setTimeout(() => {
-                    // Fallback encapsulation
-                    currentUser = { ID: id, Name: name, Balance: 45000, Pin: 1234 }; 
-                    
-                    document.getElementById('welcome-user').innerText = `Hello, ${name}!`;
-                    btn.disabled = false;
-                    switchScreen('dashboard-box');
-                }, 1200);
+                msg.innerText = "Synchronizing data layers...";
+                
+                // Real data extraction from Spreadsheet JSON endpoint
+                fetch("https://docs.google.com/spreadsheets/d/1Kl9M_lexoLtMQyy2w90MAMxWVGrFGq5SihiCev7Do2E/gviz/tq?tqx=out:json")
+                .then(res => res.text())
+                .then(txt => {
+                    try {
+                        let json = JSON.parse(txt.substr(47).slice(0, -2));
+                        let rows = json.table.rows;
+                        let foundUser = null;
+                        
+                        for(let r of rows) {
+                            if(r.c[0] && r.c[0].v == id && r.c[1] && r.c[1].v.toString().trim().toLowerCase() === name.toLowerCase()) {
+                                foundUser = {
+                                    ID: parseInt(r.c[0].v),
+                                    Name: r.c[1].v,
+                                    Balance: parseFloat(r.c[2].v),
+                                    Pin: parseInt(r.c[3].v)
+                                };
+                                break;
+                            }
+                        }
+                        
+                        if(foundUser) {
+                            currentUser = foundUser;
+                            document.getElementById('welcome-user').innerText = `Hello, ${currentUser.Name}!`;
+                            btn.disabled = false;
+                            switchScreen('dashboard-box');
+                        } else {
+                            msg.className = "status-msg error";
+                            msg.innerText = "❌ User Authentication Failed! Invalid credentials.";
+                            btn.disabled = false;
+                        }
+                    } catch(e) {
+                        msg.className = "status-msg error";
+                        msg.innerText = "Data parsing error. Please verify Google Sheet share settings (Public Editor).";
+                        btn.disabled = false;
+                    }
+                });
             })
             .catch(err => {
                 msg.className = "status-msg error";
-                msg.innerText = "Network Error! Cloud Server Not Responding.";
+                msg.innerText = "Network Error! Server not responding.";
                 btn.disabled = false;
             });
         }
 
-        // 2. SIGNUP ENGINE
+        // 2. REAL-TIME ACCOUNT SIGNUP
         function handleSignup() {
             let id = parseInt(document.getElementById('sign-id').value);
             let name = document.getElementById('sign-name').value.trim();
@@ -342,23 +367,17 @@
             let msg = document.getElementById('sign-msg');
             let btn = document.getElementById('signup-submit-btn');
 
-            if (!id || !name || isNaN(balance) || !pin) {
+            if (!id || !name || isNaN(balance) || !pin || pin.toString().length !== 4) {
                 msg.className = "status-msg error";
-                msg.innerText = "All fields are mandatory for registration!";
+                msg.innerText = "All fields are mandatory! PIN must be exactly 4 digits.";
                 return;
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Transmitting records to Google Sheet...";
+            msg.innerText = "Injecting records into Google Cloud Vault...";
             btn.disabled = true;
 
-            let payload = {
-                action: "signup",
-                id: id,
-                name: name,
-                balance: balance,
-                pin: pin
-            };
+            let payload = { action: "signup", id: id, name: name, balance: balance, pin: pin };
 
             fetch(webAppUrl, {
                 method: "POST",
@@ -369,7 +388,7 @@
             })
             .then(() => {
                 msg.className = "status-msg success";
-                msg.innerText = "🎉 Success! Account data appended to Sheet. Shifting to Login...";
+                msg.innerText = "🎉 Success! Account data appended to Cloud. Shifting to Login Screen...";
                 
                 document.getElementById('sign-id').value = '';
                 document.getElementById('sign-name').value = '';
@@ -383,7 +402,7 @@
             })
             .catch(error => {
                 msg.className = "status-msg error";
-                msg.innerText = "Transmission Failure. Check connectivity.";
+                msg.innerText = "Transmission Failure. Check connectivity logs.";
                 btn.disabled = false;
             });
         }
@@ -422,7 +441,7 @@
             }
         }
 
-        // 3. TRANSACTION ENGINE WITH GOOGLE SYNC & TRANSACTION LIMIT
+        // 3. TRANSACTION EXECUTION WITH ACCURATE PIN VALIDATION & SYNC
         function executeAction() {
             let pin = parseInt(document.getElementById('action-pin').value);
             let amount = parseFloat(document.getElementById('action-amount').value);
@@ -434,21 +453,22 @@
                 return;
             }
 
-            if (isNaN(pin)) {
+            // CRITICAL PIN GLITCH FIX: Strict matching with the sheet-verified pin
+            if (isNaN(pin) || pin !== currentUser.Pin) {
                 msg.className = "status-msg error";
-                msg.innerText = "Security Alert: Verification PIN cannot be null.";
+                msg.innerText = "❌ Transaction Aborted: Invalid Security PIN Verification Failed!";
                 return;
             }
 
-            // Logic matching standard C++ architectural validations
             if (currentAction === 'balance') {
                 msg.className = "status-msg success";
-                msg.innerText = `Current Cloud Balance: ₹ ${currentUser.Balance.toLocaleString()}`;
+                msg.innerText = `Current Cloud Balance: ₹ ${currentUser.Balance.toLocaleString('en-IN')}`;
                 document.getElementById('action-panel').classList.add('hidden');
                 return;
             } 
             
             let isBalanceChanging = false;
+            let targetBalance = currentUser.Balance;
 
             if (currentAction === 'deposit') {
                 if (amount <= 0 || isNaN(amount)) {
@@ -456,7 +476,7 @@
                     msg.innerText = "Invalid Parameter: Enter a valid positive amount.";
                     return;
                 }
-                currentUser.Balance += amount;
+                targetBalance += amount;
                 isBalanceChanging = true;
             } 
             else if (currentAction === 'withdraw') {
@@ -465,10 +485,9 @@
                     msg.innerText = "Invalid Parameter: Enter a valid positive withdrawal amount.";
                     return;
                 }
-                // CUSTOM STRICT LIMIT RULE: ₹10,000 max check
                 if (amount > 10000) {
                     msg.className = "status-msg error";
-                    msg.innerText = "❌ Transaction Aborted: Single transaction limit exceeded! Maximum allowed is ₹10,000.";
+                    msg.innerText = "❌ Limit Exceeded: Single transaction cannot exceed ₹10,000.";
                     return;
                 }
                 if (amount > currentUser.Balance) {
@@ -476,32 +495,35 @@
                     msg.innerText = "Transaction Declined: Insufficient Reserves in Cloud Account.";
                     return;
                 }
-                currentUser.Balance -= amount;
+                targetBalance -= amount;
                 isBalanceChanging = true;
             }
 
-            // Trigger telemetry synchronization if state changes
             if (isBalanceChanging) {
                 msg.className = "status-msg loading";
-                msg.innerText = "Syncing balances with Google Sheet Cloud...";
+                msg.innerText = "Syncing fresh balances with Cloud Ledger...";
+
+                let updatePayload = {
+                    action: "updateBalance",
+                    id: currentUser.ID,
+                    newBalance: targetBalance
+                };
 
                 fetch(webAppUrl, {
                     method: "POST",
                     mode: "no-cors",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        action: "updateBalance",
-                        id: currentUser.ID,
-                        newBalance: currentUser.Balance
-                    })
+                    body: JSON.stringify(updatePayload)
                 })
                 .then(() => {
+                    // Update frontend model instance state immediately after transaction success
+                    currentUser.Balance = targetBalance;
                     msg.className = "status-msg success";
-                    msg.innerText = `✅ Verified! Balance updated in Google Sheet. Current Capital: ₹ ${currentUser.Balance.toLocaleString()}`;
+                    msg.innerText = `✅ Verified! Balance updated in Google Sheet. Current Capital: ₹ ${currentUser.Balance.toLocaleString('en-IN')}`;
                 })
                 .catch(() => {
                     msg.className = "status-msg error";
-                    msg.innerText = "Synchronization Interrupted. Check Google Console status.";
+                    msg.innerText = "Synchronization Interrupted. Check Google Console connection.";
                 });
             }
 
