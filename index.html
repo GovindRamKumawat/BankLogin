@@ -189,6 +189,7 @@
 </head>
 <body>
 
+    <!-- 1. LOGIN SCREEN -->
     <div id="login-box" class="container">
         <h2>Farzi Bank</h2>
         <p>Secure Sheet Portal Login</p>
@@ -205,6 +206,7 @@
         <div id="login-msg" class="status-msg"></div>
     </div>
 
+    <!-- 2. SIGNUP SCREEN -->
     <div id="signup-box" class="container hidden">
         <h2>Open Account</h2>
         <p>Join Farzi National Bank</p>
@@ -229,6 +231,7 @@
         <div id="sign-msg" class="status-msg"></div>
     </div>
 
+    <!-- 3. MAIN DASHBOARD SCREEN -->
     <div id="dashboard-box" class="container hidden">
         <h2 id="welcome-user">Welcome, User</h2>
         <p>Account Dashboard (Cloud Sync)</p>
@@ -257,6 +260,7 @@
         <div id="dash-msg" class="status-msg"></div>
     </div>
 
+    <!-- CHIEF ARCHITECT BRANDING -->
     <div class="premium-footer">
         <h4>Chief Architect</h4>
         <div class="dev-name">𝐆𝐨𝐯𝐢𝐧𝐝 𝐑𝐚𝐦</div>
@@ -267,16 +271,15 @@
     </div>
 
     <script>
-        // UPDATED GOOGLE WEB APP API PROXY URL
+        // FIXED APPS SCRIPT ROUTE NODE
         const webAppUrl = "https://script.google.com/macros/s/AKfycbwMiHJDp7ZswnJwPhFH6q97b6_fv_uv2aoMo07FuwziKzN1h9Kt7sfe5n6qsPWuk9tuRA/exec";
         
-        // FIXED EXACT SPELLING GOOGLE SHEET ID STRING
+        // FIXED SPREADSHEET INDICES PATHWAY WITH ACCURATE CAPITAL "I"
         const sheetId = "1Kl9M_IexoLtMQyy2w90MAMxWVGrFGq5SihiCev7Do2E";
         
         let currentUser = null;
         let currentAction = '';
 
-        // Session validation algorithm on lifecycle mount initialization
         window.onload = function() {
             let sessionData = sessionStorage.getItem("activeUserSession");
             if (sessionData) {
@@ -299,7 +302,7 @@
             document.getElementById('action-panel').classList.add('hidden');
         }
 
-        // 1. HARDLOCK AUTHENTICATION LOGIC: QUERY DIRECT SPREADSHEET VECTOR ROWS
+        // 1. ADVANCED LOGARITHMIC QUERY EVALUATION GATE
         function handleLogin() {
             let id = parseInt(document.getElementById('login-id').value);
             let name = document.getElementById('login-name').value.trim();
@@ -313,10 +316,10 @@
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Connecting to Secure Vault Cloud... Verifying Credentials.";
+            msg.innerText = "Scanning Google Sheet Records... Verifying Authorization.";
             btn.disabled = true;
 
-            // Direct mapping dataset parse algorithm matching strict row attributes
+            // Accessing Visualization API using the absolute clean Sheet ID
             fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`)
             .then(res => res.text())
             .then(txt => {
@@ -345,7 +348,7 @@
                         switchScreen('dashboard-box');
                     } else {
                         msg.className = "status-msg error";
-                        msg.innerText = "❌ Security Alert: Invalid Account ID or Holder Name. Access Denied.";
+                        msg.innerText = "❌ Denied: Credentials do not exist within database sheets.";
                         btn.disabled = false;
                     }
                 } catch(e) {
@@ -356,12 +359,12 @@
             })
             .catch(() => {
                 msg.className = "status-msg error";
-                msg.innerText = "Cloud Gateway Network Interrupted. Retry login.";
+                msg.innerText = "Cloud Gateway Network Interrupted.";
                 btn.disabled = false;
             });
         }
 
-        // 2. HARD LOCK SIGNUP PIPELINE (AUTO-REFRESH ENABLED)
+        // 2. SIGNUP GATEWAY PROTOCOL WITH DUPLICATE CONSTRAINTS MONITORING
         function handleSignup() {
             let id = parseInt(document.getElementById('sign-id').value);
             let name = document.getElementById('sign-name').value.trim();
@@ -383,10 +386,9 @@
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Processing constraints verification across cloud tables...";
+            msg.innerText = "Processing indices parameters allocation...";
             btn.disabled = true;
 
-            // Checking index constraint duplicate parameters to block account spoofing
             fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`)
             .then(res => res.text())
             .then(txt => {
@@ -402,7 +404,6 @@
                 }
 
                 let payload = { action: "signup", id: id, name: name, balance: balance, pin: pin };
-                
                 fetch(webAppUrl, {
                     method: "POST",
                     mode: "no-cors",
@@ -410,15 +411,10 @@
                 })
                 .then(() => {
                     msg.className = "status-msg success";
-                    msg.innerText = "🎉 Success! Credentials committed to cloud sheets ledger. Environment reloading...";
+                    msg.innerText = "🎉 Success! Records structural logs committed to Google Sheet. Environment reloading...";
                     setTimeout(() => {
-                        window.location.reload(); // HARD RESET CONTEXT SYSTEM MEMORY STATE
+                        window.location.reload();
                     }, 2000);
-                })
-                .catch(() => {
-                    msg.className = "status-msg error";
-                    msg.innerText = "Transaction injection pipe timeout error.";
-                    btn.disabled = false;
                 });
             });
         }
@@ -457,7 +453,7 @@
             }
         }
 
-        // 3. SECURE DOUBLE LOCK TRANSACTION OPERATIONS TRIPLE VALIDATED BY SERVER
+        // 3. LEDGER MUTATION CONTROLLER ENGINE
         function executeAction() {
             let pin = parseInt(document.getElementById('action-pin').value);
             let amount = parseFloat(document.getElementById('action-amount').value);
@@ -469,7 +465,6 @@
                 return;
             }
 
-            // CRITICAL PIN GLITCH ELIMINATION VERIFICATION GATEWAY
             if (isNaN(pin) || pin !== currentUser.Pin) {
                 msg.className = "status-msg error";
                 msg.innerText = "❌ Security Access Aborted: Security PIN validation failed! Access Denied.";
@@ -541,7 +536,7 @@
                     msg.innerText = "✅ Confirmed! Cloud cell logs synchronized successfully. Resetting memory matrix...";
                     
                     setTimeout(() => {
-                        window.location.reload(); // FORCES SYSTEM ENVIRONMENT HARD RELOAD TO RENDER FRESH SPREADSHEET CELLS DATA
+                        window.location.reload();
                     }, 2000);
                 })
                 .catch(() => {
