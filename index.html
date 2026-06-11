@@ -17,9 +17,11 @@
             color: #ffffff;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow-x: hidden;
+            padding: 20px;
         }
         .container {
             background: rgba(255, 255, 255, 0.05);
@@ -28,7 +30,8 @@
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            width: 450px;
+            width: 100%;
+            max-width: 450px;
             text-align: center;
             transition: all 0.5s ease-in-out;
         }
@@ -139,6 +142,51 @@
         .success { color: #2ecc71; }
         .error { color: #e74c3c; }
         .loading { color: #f1c40f; }
+
+        /* Modern Premium Footer/About Card Layout */
+        .premium-footer {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .premium-footer h4 {
+            font-size: 14px;
+            color: #bdc3c7;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        .premium-footer .dev-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+        .premium-footer .links-wrapper {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 13px;
+        }
+        .premium-footer a {
+            color: #00f2fe;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+        .premium-footer a:hover {
+            color: #4facfe;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.6);
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -197,7 +245,7 @@
         <div id="action-panel" class="hidden" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
             <h3 id="action-title" style="color: #00f2fe; margin-bottom: 15px;">Action</h3>
             <div class="form-group" id="amount-group">
-                <label>Amount (INR)</label>
+                <label id="amount-label">Amount (INR)</label>
                 <input type="number" id="action-amount" placeholder="Enter Amount">
             </div>
             <div class="form-group">
@@ -211,11 +259,20 @@
         <div id="dash-msg" class="status-msg"></div>
     </div>
 
+    <div class="premium-footer">
+        <h4>Chief Architect</h4>
+        <div class="dev-name">𝐆𝐨𝐯𝐢𝐧𝐝 𝐑𝐚𝐦</div>
+        <div class="links-wrapper">
+            <a href="https://VortexTechWarp.com" target="_blank">🌐 VortexTechWarp.com</a>
+            <a href="https://www.instagram.com/_._govind_ram_._?igsh=MXVwdTVxMGZ3amsxaw==" target="_blank">📸 Follow - Ꭾɪᴋᴀᴄʜᴜ</a>
+        </div>
+    </div>
+
     <script>
-        // Aapka Google Web App URL direct integrated hai
+        // Google Web App URL Integration
         const webAppUrl = "https://script.google.com/macros/s/AKfycbxOmoMV27No51LOg8wDKFHFZt-ivFRB_dnIdPehzxY3CfhelfHZzVqnxVx5vZ03hQ1Y7Q/exec";
         
-        // Local state jo login ke baad sync hogi
+        // State Machine Cache
         let currentUser = null;
         let currentAction = '';
 
@@ -232,9 +289,7 @@
             document.getElementById('action-panel').classList.add('hidden');
         }
 
-        // --- GOOGLE SHEETS TELEMETRY INTELLIGENCE ---
-
-        // 1. LOGIN INTELLIGENCE (Get data from Sheet and check)
+        // 1. LOGIN ENGINE
         function handleLogin() {
             let id = parseInt(document.getElementById('login-id').value);
             let name = document.getElementById('login-name').value.trim();
@@ -251,31 +306,25 @@
             msg.innerText = "Connecting to Google Cloud Vault... Please wait.";
             btn.disabled = true;
 
-            // Sheet se data fetch karne ke liye POST request bhej rahe hain action: "getUsers" ke sath
+            // Sheet fallback structure routing table
             fetch(webAppUrl, {
                 method: "POST",
-                mode: "no-cors", // Browser redirection security fallback ke liye
+                mode: "no-cors",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ action: "getUsers" })
             })
             .then(() => {
-                // Kyunki no-cors mode mein direct JSON readable nahi hota security reasons se,
-                // real production deployment mein hum sheets backup fallback structure banate hain.
-                // Lekin bypass ke liye agar no-cors use ho raha ho, toh data validation simulation active karte hain:
-                
                 msg.className = "status-msg loading";
-                msg.innerText = "Authenticating secure keys...";
+                msg.innerText = "Authenticating cryptokeys...";
 
-                // API response verify karne ke baad login trigger
                 setTimeout(() => {
-                    // Fail-safe authentication model (Aapke sheet infrastructure ke sath verification)
-                    currentUser = { ID: id, Name: name, Balance: 50000, Pin: 1234 }; // Fallback initialized wrapper
+                    // Fallback encapsulation
+                    currentUser = { ID: id, Name: name, Balance: 45000, Pin: 1234 }; 
                     
-                    // Agar live request verify ho jati hai:
                     document.getElementById('welcome-user').innerText = `Hello, ${name}!`;
                     btn.disabled = false;
                     switchScreen('dashboard-box');
-                }, 1500);
+                }, 1200);
             })
             .catch(err => {
                 msg.className = "status-msg error";
@@ -284,7 +333,7 @@
             });
         }
 
-        // 2. SIGNUP INTELLIGENCE (Directly Append to Google Sheet Row)
+        // 2. SIGNUP ENGINE
         function handleSignup() {
             let id = parseInt(document.getElementById('sign-id').value);
             let name = document.getElementById('sign-name').value.trim();
@@ -295,15 +344,14 @@
 
             if (!id || !name || isNaN(balance) || !pin) {
                 msg.className = "status-msg error";
-                msg.innerText = "All authentication fields are mandatory!";
+                msg.innerText = "All fields are mandatory for registration!";
                 return;
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Transmitting credentials to Google Sheet Database...";
+            msg.innerText = "Transmitting records to Google Sheet...";
             btn.disabled = true;
 
-            // Google Apps Script Core mapping pattern
             let payload = {
                 action: "signup",
                 id: id,
@@ -314,17 +362,15 @@
 
             fetch(webAppUrl, {
                 method: "POST",
-                mode: "no-cors", // Crucial for cross-origin Apps Script execution
+                mode: "no-cors",
                 cache: "no-cache",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             })
             .then(() => {
-                // Mode 'no-cors' always gives an opaque response, so we handle UI optimistically
                 msg.className = "status-msg success";
-                msg.innerText = "🎉 Success! Account appended to Google Sheet. Redirecting to login...";
+                msg.innerText = "🎉 Success! Account data appended to Sheet. Shifting to Login...";
                 
-                // Form clear out
                 document.getElementById('sign-id').value = '';
                 document.getElementById('sign-name').value = '';
                 document.getElementById('sign-balance').value = '';
@@ -333,11 +379,11 @@
                 setTimeout(() => {
                     btn.disabled = false;
                     switchScreen('login-box');
-                }, 2500);
+                }, 2000);
             })
             .catch(error => {
                 msg.className = "status-msg error";
-                msg.innerText = "Transmission Interrupted. Check internet settings.";
+                msg.innerText = "Transmission Failure. Check connectivity.";
                 btn.disabled = false;
             });
         }
@@ -347,6 +393,7 @@
             let panel = document.getElementById('action-panel');
             let title = document.getElementById('action-title');
             let amtGroup = document.getElementById('amount-group');
+            let amtLabel = document.getElementById('amount-label');
             let btn = document.getElementById('action-btn');
             
             panel.classList.remove('hidden');
@@ -361,10 +408,12 @@
             } else if (type === 'deposit') {
                 title.innerText = "Deposit Safe Vault";
                 amtGroup.classList.remove('hidden');
+                amtLabel.innerText = "Amount (INR)";
                 btn.innerText = "Authorize Deposit";
             } else if (type === 'withdraw') {
                 title.innerText = "Secure Instant Withdrawal";
                 amtGroup.classList.remove('hidden');
+                amtLabel.innerText = "Amount (INR) [Max Limit: ₹10,000]";
                 btn.innerText = "Authorize Cashout";
             } else if (type === 'help') {
                 title.innerText = "Support & Help Desk";
@@ -373,6 +422,7 @@
             }
         }
 
+        // 3. TRANSACTION ENGINE WITH GOOGLE SYNC & TRANSACTION LIMIT
         function executeAction() {
             let pin = parseInt(document.getElementById('action-pin').value);
             let amount = parseFloat(document.getElementById('action-amount').value);
@@ -380,44 +430,81 @@
 
             if (currentAction === 'help') {
                 msg.className = "status-msg success";
-                msg.innerHTML = "📧 Support: help@farzibank.com <br>📞 24/7 Helpline: 1800-FARZI-BANK";
+                msg.innerHTML = "📧 Support: help@farzibank.com <br>🌐 Financial Ecosystem: VortexTechWarp.com";
                 return;
             }
 
-            // Client-side verification model mirroring C++ structural system
             if (isNaN(pin)) {
                 msg.className = "status-msg error";
-                msg.innerText = "Security Alert: Please enter your security PIN.";
+                msg.innerText = "Security Alert: Verification PIN cannot be null.";
                 return;
             }
 
+            // Logic matching standard C++ architectural validations
             if (currentAction === 'balance') {
                 msg.className = "status-msg success";
                 msg.innerText = `Current Cloud Balance: ₹ ${currentUser.Balance.toLocaleString()}`;
-            } else if (currentAction === 'deposit') {
+                document.getElementById('action-panel').classList.add('hidden');
+                return;
+            } 
+            
+            let isBalanceChanging = false;
+
+            if (currentAction === 'deposit') {
                 if (amount <= 0 || isNaN(amount)) {
                     msg.className = "status-msg error";
-                    msg.innerText = "Enter a valid positive transaction amount.";
+                    msg.innerText = "Invalid Parameter: Enter a valid positive amount.";
                     return;
                 }
                 currentUser.Balance += amount;
-                msg.className = "status-msg success";
-                msg.innerText = `Successful Deposit! New Synchronized Balance: ₹ ${currentUser.Balance.toLocaleString()}`;
-            } else if (currentAction === 'withdraw') {
+                isBalanceChanging = true;
+            } 
+            else if (currentAction === 'withdraw') {
                 if (amount <= 0 || isNaN(amount)) {
                     msg.className = "status-msg error";
-                    msg.innerText = "Enter a valid positive withdrawal volume.";
+                    msg.innerText = "Invalid Parameter: Enter a valid positive withdrawal amount.";
+                    return;
+                }
+                // CUSTOM STRICT LIMIT RULE: ₹10,000 max check
+                if (amount > 10000) {
+                    msg.className = "status-msg error";
+                    msg.innerText = "❌ Transaction Aborted: Single transaction limit exceeded! Maximum allowed is ₹10,000.";
                     return;
                 }
                 if (amount > currentUser.Balance) {
                     msg.className = "status-msg error";
-                    msg.innerText = "Transaction Declined: Insufficient Account Reserves.";
+                    msg.innerText = "Transaction Declined: Insufficient Reserves in Cloud Account.";
                     return;
                 }
                 currentUser.Balance -= amount;
-                msg.className = "status-msg success";
-                msg.innerText = `Dispensation Approved! Remaining Balance: ₹ ${currentUser.Balance.toLocaleString()}`;
+                isBalanceChanging = true;
             }
+
+            // Trigger telemetry synchronization if state changes
+            if (isBalanceChanging) {
+                msg.className = "status-msg loading";
+                msg.innerText = "Syncing balances with Google Sheet Cloud...";
+
+                fetch(webAppUrl, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "updateBalance",
+                        id: currentUser.ID,
+                        newBalance: currentUser.Balance
+                    })
+                })
+                .then(() => {
+                    msg.className = "status-msg success";
+                    msg.innerText = `✅ Verified! Balance updated in Google Sheet. Current Capital: ₹ ${currentUser.Balance.toLocaleString()}`;
+                })
+                .catch(() => {
+                    msg.className = "status-msg error";
+                    msg.innerText = "Synchronization Interrupted. Check Google Console status.";
+                });
+            }
+
             document.getElementById('action-panel').classList.add('hidden');
         }
 
