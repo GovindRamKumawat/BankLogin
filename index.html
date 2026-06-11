@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farzi National Bank</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            width: 450px;
+            text-align: center;
+            transition: all 0.5s ease-in-out;
+        }
+        h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            color: #00f2fe;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+        p {
+            font-size: 13px;
+            color: #bdc3c7;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: #4facfe;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
+        }
+        .link-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #a1a1a1;
+        }
+        .link-text span {
+            color: #00f2fe;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .link-text span:hover {
+            text-decoration: underline;
+        }
+        .hidden {
+            display: none !important;
+        }
+        /* Dashboard Services Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .service-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .service-card:hover {
+            background: rgba(0, 242, 254, 0.1);
+            border-color: #00f2fe;
+            transform: scale(1.03);
+        }
+        .status-msg {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .success { color: #2ecc71; }
+        .error { color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+    <div id="login-box" class="container">
+        <h2>Farzi Bank</h2>
+        <p>Secure Portal Login</p>
+        <div class="form-group">
+            <label>Account ID</label>
+            <input type="number" id="login-id" placeholder="Enter Account ID">
+        </div>
+        <div class="form-group">
+            <label>Account Holder Name</label>
+            <input type="text" id="login-name" placeholder="Enter Name">
+        </div>
+        <button class="btn" onclick="handleLogin()">Access Dashboard</button>
+        <div class="link-text">New user? <span onclick="switchScreen('signup-box')">Create Account</span></div>
+        <div id="login-msg" class="status-msg"></div>
+    </div>
+
+    <div id="signup-box" class="container hidden">
+        <h2>Open Account</h2>
+        <p>Join Farzi National Bank</p>
+        <div class="form-group">
+            <label>Desired ID</label>
+            <input type="number" id="sign-id" placeholder="Create Unique ID">
+        </div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="sign-name" placeholder="Enter Your Name">
+        </div>
+        <div class="form-group">
+            <label>Initial Deposit (INR)</label>
+            <input type="number" id="sign-balance" placeholder="Min. 500 INR">
+        </div>
+        <div class="form-group">
+            <label>Secure 4-Digit Security PIN</label>
+            <input type="password" id="sign-pin" placeholder="Enter Security PIN" maxlength="4">
+        </div>
+        <button class="btn" onclick="handleSignup()">Register Account</button>
+        <div class="link-text">Already registered? <span onclick="switchScreen('login-box')">Login Here</span></div>
+        <div id="sign-msg" class="status-msg"></div>
+    </div>
+
+    <div id="dashboard-box" class="container hidden">
+        <h2 id="welcome-user">Welcome, User</h2>
+        <p>Account Dashboard</p>
+        
+        <div class="grid">
+            <div class="service-card" onclick="showAction('balance')">📊 Balance</div>
+            <div class="service-card" onclick="showAction('deposit')">💰 Deposit</div>
+            <div class="service-card" onclick="showAction('withdraw')">💸 Withdraw</div>
+            <div class="service-card" onclick="showAction('help')">❓ Help Support</div>
+        </div>
+
+        <div id="action-panel" class="hidden" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+            <h3 id="action-title" style="color: #00f2fe; margin-bottom: 15px;">Action</h3>
+            <div class="form-group" id="amount-group">
+                <label>Amount (INR)</label>
+                <input type="number" id="action-amount" placeholder="Enter Amount">
+            </div>
+            <div class="form-group">
+                <label>Security PIN</label>
+                <input type="password" id="action-pin" placeholder="4-Digit PIN" maxlength="4">
+            </div>
+            <button class="btn" id="action-btn" onclick="executeAction()">Confirm Transaction</button>
+        </div>
+
+        <button class="btn" onclick="handleLogout()" style="background: transparent; border: 1px solid #e74c3c; box-shadow: none; color: #e74c3c; margin-top: 25px;">Secure Logout</button>
+        <div id="dash-msg" class="status-msg"></div>
+    </div>
+
+    <script>
+        // Mocking the C++ Logic inside standard modern engine for Github deployment
+        let User = [
+            {ID: 1, Name: "a", Balance: 100000, Pin: 1234},
+            {ID: 98867, Name: "Suresh", Balance: 45500, Pin: 4321},
+            {ID: 98868, Name: "Priya", Balance: 75000, Pin: 9876},
+            {ID: 98869, Name: "Amit", Balance: 12500, Pin: 5678},
+            {ID: 98870, Name: "Anjali", Balance: 250000, Pin: 1122}
+        ];
+        let loggedInIndex = -1;
+        let currentAction = '';
+
+        function switchScreen(boxId) {
+            document.getElementById('login-box').classList.add('hidden');
+            document.getElementById('signup-box').classList.add('hidden');
+            document.getElementById('dashboard-box').classList.add('hidden');
+            document.getElementById(boxId).classList.remove('hidden');
+            clearMessages();
+        }
+
+        function clearMessages() {
+            document.querySelectorAll('.status-msg').forEach(el => el.innerHTML = '');
+            document.getElementById('action-panel').classList.add('hidden');
+        }
+
+        function handleLogin() {
+            let id = parseInt(document.getElementById('login-id').value);
+            let name = document.getElementById('login-name').value;
+            let msg = document.getElementById('login-msg');
+
+            let index = User.findIndex(u => u.ID === id && u.Name === name);
+            if(index !== -1) {
+                loggedInIndex = index;
+                document.getElementById('welcome-user').innerText = `Hello, ${User[index].Name}!`;
+                switchScreen('dashboard-box');
+            } else {
+                msg.className = "status-msg error";
+                msg.innerText = "Invalid ID or Name. Access Denied.";
+            }
+        }
+
+        function handleSignup() {
+            let id = parseInt(document.getElementById('sign-id').value);
+            let name = document.getElementById('sign-name').value;
+            let balance = parseFloat(document.getElementById('sign-balance').value);
+            let pin = parseInt(document.getElementById('sign-pin').value);
+            let msg = document.getElementById('sign-msg');
+
+            if(!id || !name || !balance || !pin) {
+                msg.className = "status-msg error";
+                msg.innerText = "Please fill all registration fields!";
+                return;
+            }
+
+            if(User.some(u => u.ID === id)) {
+                msg.className = "status-msg error";
+                msg.innerText = "Account ID already exists!";
+                return;
+            }
+
+            User.push({ID: id, Name: name, Balance: balance, Pin: pin});
+            msg.className = "status-msg success";
+            msg.innerText = "Account Created Successfully! Switching to Login...";
+            setTimeout(() => switchScreen('login-box'), 2000);
+        }
+
+        function showAction(type) {
+            currentAction = type;
+            let panel = document.getElementById('action-panel');
+            let title = document.getElementById('action-title');
+            let amtGroup = document.getElementById('amount-group');
+            let btn = document.getElementById('action-btn');
+            
+            panel.classList.remove('hidden');
+            document.getElementById('action-amount').value = '';
+            document.getElementById('action-pin').value = '';
+
+            if(type === 'balance') {
+                title.innerText = "Check Balance Portal";
+                amtGroup.classList.add('hidden');
+                btn.innerText = "Fetch Balance";
+            } else if(type === 'deposit') {
+                title.innerText = "Deposit Safe Vault";
+                amtGroup.classList.remove('hidden');
+                btn.innerText = "Authorize Deposit";
+            } else if(type === 'withdraw') {
+                title.innerText = "Secure Instant Withdrawal";
+                amtGroup.classList.remove('hidden');
+                btn.innerText = "Authorize Cashout";
+            } else if(type === 'help') {
+                title.innerText = "Support & Help Desk";
+                amtGroup.classList.add('hidden');
+                btn.innerText = "Show Information";
+            }
+        }
+
+        function executeAction() {
+            let pin = parseInt(document.getElementById('action-pin').value);
+            let amount = parseFloat(document.getElementById('action-amount').value);
+            let msg = document.getElementById('dash-msg');
+            let user = User[loggedInIndex];
+
+            if(currentAction === 'help') {
+                msg.className = "status-msg success";
+                msg.innerHTML = "📧 Support: help@farzibank.com <br>📞 24/7 Helpline: 1800-FARZI-BANK";
+                return;
+            }
+
+            if(pin !== user.Pin) {
+                msg.className = "status-msg error";
+                msg.innerText = "❌ Security Alert: Cryptographic PIN verification failed!";
+                return;
+            }
+
+            if(currentAction === 'balance') {
+                msg.className = "status-msg success";
+                msg.innerText = `Current Verified Balance: ₹ ${user.Balance.toLocaleString()}`;
+            } else if(currentAction === 'deposit') {
+                if(amount <= 0 || isNaN(amount)) {
+                    msg.className = "status-msg error";
+                    msg.innerText = "Enter a valid positive dynamic amount.";
+                    return;
+                }
+                user.Balance += amount;
+                msg.className = "status-msg success";
+                msg.innerText = `Successful Deposit! New Vault Balance: ₹ ${user.Balance.toLocaleString()}`;
+            } else if(currentAction === 'withdraw') {
+                if(amount <= 0 || isNaN(amount)) {
+                    msg.className = "status-msg error";
+                    msg.innerText = "Enter a valid positive withdrawal amount.";
+                    return;
+                }
+                if(amount > user.Balance) {
+                    msg.className = "status-msg error";
+                    msg.innerText = "Transaction Declined: Insufficient Account Reserves.";
+                    return;
+                }
+                user.Balance -= amount;
+                msg.className = "status-msg success";
+                msg.innerText = `Dispensation Approved! Remaining Balance: ₹ ${user.Balance.toLocaleString()}`;
+            }
+            document.getElementById('action-panel').classList.add('hidden');
+        }
+
+        function handleLogout() {
+            loggedInIndex = -1;
+            switchScreen('login-box');
+        }
+    </script>
+</body>
+</html>
