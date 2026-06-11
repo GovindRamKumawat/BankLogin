@@ -189,7 +189,6 @@
 </head>
 <body>
 
-    <!-- 1. LOGIN SCREEN -->
     <div id="login-box" class="container">
         <h2>Farzi Bank</h2>
         <p>Secure Sheet Portal Login</p>
@@ -206,7 +205,6 @@
         <div id="login-msg" class="status-msg"></div>
     </div>
 
-    <!-- 2. SIGNUP SCREEN -->
     <div id="signup-box" class="container hidden">
         <h2>Open Account</h2>
         <p>Join Farzi National Bank</p>
@@ -226,12 +224,11 @@
             <label>Secure 4-Digit Security PIN</label>
             <input type="password" id="sign-pin" placeholder="Enter Security PIN" maxlength="4">
         </div>
-        <button class="btn" id="signup-submit-btn" onclick="handleSignup()">Register Account</button>
         <div class="link-text">Already registered? <span onclick="switchScreen('login-box')">Login Here</span></div>
+        <button class="btn" id="signup-submit-btn" onclick="handleSignup()">Register Account</button>
         <div id="sign-msg" class="status-msg"></div>
     </div>
 
-    <!-- 3. MAIN DASHBOARD SCREEN -->
     <div id="dashboard-box" class="container hidden">
         <h2 id="welcome-user">Welcome, User</h2>
         <p>Account Dashboard (Cloud Sync)</p>
@@ -260,7 +257,6 @@
         <div id="dash-msg" class="status-msg"></div>
     </div>
 
-    <!-- CHIEF ARCHITECT BRANDING -->
     <div class="premium-footer">
         <h4>Chief Architect</h4>
         <div class="dev-name">𝐆𝐨𝐯𝐢𝐧𝐝 𝐑𝐚𝐦</div>
@@ -271,11 +267,8 @@
     </div>
 
     <script>
-        // FIXED APPS SCRIPT ROUTE NODE
+        // WEB APP URL CONNECTED VIA DEPLOYMENT NODE
         const webAppUrl = "https://script.google.com/macros/s/AKfycbwMiHJDp7ZswnJwPhFH6q97b6_fv_uv2aoMo07FuwziKzN1h9Kt7sfe5n6qsPWuk9tuRA/exec";
-        
-        // FIXED SPREADSHEET INDICES PATHWAY WITH ACCURATE CAPITAL "I"
-        const sheetId = "1Kl9M_IexoLtMQyy2w90MAMxWVGrFGq5SihiCev7Do2E";
         
         let currentUser = null;
         let currentAction = '';
@@ -302,7 +295,7 @@
             document.getElementById('action-panel').classList.add('hidden');
         }
 
-        // 1. ADVANCED LOGARITHMIC QUERY EVALUATION GATE
+        // 1. FIXED SECURE SERVER-SIDE LOGIN ROUTINE
         function handleLogin() {
             let id = parseInt(document.getElementById('login-id').value);
             let name = document.getElementById('login-name').value.trim();
@@ -316,55 +309,41 @@
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Scanning Google Sheet Records... Verifying Authorization.";
+            msg.innerText = "Querying Database Registry Matrices... Please wait.";
             btn.disabled = true;
 
-            // Accessing Visualization API using the absolute clean Sheet ID
-            fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`)
-            .then(res => res.text())
-            .then(txt => {
-                try {
-                    let json = JSON.parse(txt.substr(47).slice(0, -2));
-                    let rows = json.table.rows;
-                    let matchedData = null;
-                    
-                    for(let r of rows) {
-                        if(r.c[0] && parseInt(r.c[0].v) === id && r.c[1] && r.c[1].v.toString().trim().toLowerCase() === name.toLowerCase()) {
-                            matchedData = {
-                                ID: parseInt(r.c[0].v),
-                                Name: r.c[1].v,
-                                Balance: parseFloat(r.c[2].v),
-                                Pin: parseInt(r.c[3].v)
-                            };
-                            break;
-                        }
-                    }
-                    
-                    if(matchedData) {
-                        currentUser = matchedData;
-                        sessionStorage.setItem("activeUserSession", JSON.stringify(currentUser));
-                        document.getElementById('welcome-user').innerText = `Hello, ${currentUser.Name}!`;
-                        btn.disabled = false;
-                        switchScreen('dashboard-box');
-                    } else {
-                        msg.className = "status-msg error";
-                        msg.innerText = "❌ Denied: Credentials do not exist within database sheets.";
-                        btn.disabled = false;
-                    }
-                } catch(e) {
+            // Direct API payload communication with Web App Endpoint
+            fetch(webAppUrl, {
+                method: "POST",
+                body: JSON.stringify({ action: "login", id: id, name: name })
+            })
+            .then(res => res.json())
+            .then(response => {
+                if(response.status === "success") {
+                    currentUser = {
+                        ID: parseInt(response.account.id),
+                        Name: response.account.name,
+                        Balance: parseFloat(response.account.balance),
+                        Pin: parseInt(response.account.pin)
+                    };
+                    sessionStorage.setItem("activeUserSession", JSON.stringify(currentUser));
+                    document.getElementById('welcome-user').innerText = `Hello, ${currentUser.Name}!`;
+                    btn.disabled = false;
+                    switchScreen('dashboard-box');
+                } else {
                     msg.className = "status-msg error";
-                    msg.innerText = "Parsing Exception: Database formatting mismatch. Verify share parameters.";
+                    msg.innerText = "❌ Denied: " + response.message;
                     btn.disabled = false;
                 }
             })
             .catch(() => {
                 msg.className = "status-msg error";
-                msg.innerText = "Cloud Gateway Network Interrupted.";
+                msg.innerText = "System Exception: Execution failure or API node timeout.";
                 btn.disabled = false;
             });
         }
 
-        // 2. SIGNUP GATEWAY PROTOCOL WITH DUPLICATE CONSTRAINTS MONITORING
+        // 2. STABLE SIGNUP CONTROLLER GATEWAY
         function handleSignup() {
             let id = parseInt(document.getElementById('sign-id').value);
             let name = document.getElementById('sign-name').value.trim();
@@ -386,36 +365,31 @@
             }
 
             msg.className = "status-msg loading";
-            msg.innerText = "Processing indices parameters allocation...";
+            msg.innerText = "Processing unique index token validations...";
             btn.disabled = true;
 
-            fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`)
-            .then(res => res.text())
-            .then(txt => {
-                let json = JSON.parse(txt.substr(47).slice(0, -2));
-                let rows = json.table.rows;
-                for(let r of rows) {
-                    if(r.c[0] && parseInt(r.c[0].v) === id) {
-                        msg.className = "status-msg error";
-                        msg.innerText = "❌ Index Violation: This Account ID already allocated!";
-                        btn.disabled = false;
-                        return;
-                    }
-                }
-
-                let payload = { action: "signup", id: id, name: name, balance: balance, pin: pin };
-                fetch(webAppUrl, {
-                    method: "POST",
-                    mode: "no-cors",
-                    body: JSON.stringify(payload)
-                })
-                .then(() => {
+            fetch(webAppUrl, {
+                method: "POST",
+                body: JSON.stringify({ action: "signup", id: id, name: name, balance: balance, pin: pin })
+            })
+            .then(res => res.json())
+            .then(response => {
+                if(response.status === "success") {
                     msg.className = "status-msg success";
-                    msg.innerText = "🎉 Success! Records structural logs committed to Google Sheet. Environment reloading...";
+                    msg.innerText = "🎉 Success! Records structural logs committed to Cloud. Environment reloading...";
                     setTimeout(() => {
                         window.location.reload();
                     }, 2000);
-                });
+                } else {
+                    msg.className = "status-msg error";
+                    msg.innerText = "❌ Failed: " + response.message;
+                    btn.disabled = false;
+                }
+            })
+            .catch(() => {
+                msg.className = "status-msg error";
+                msg.innerText = "Pipeline Failure: Transaction mapping denied.";
+                btn.disabled = false;
             });
         }
 
@@ -453,7 +427,7 @@
             }
         }
 
-        // 3. LEDGER MUTATION CONTROLLER ENGINE
+        // 3. SECURE DOUBLE-AUTH BALANCE TRANSACTION PIPELINE
         function executeAction() {
             let pin = parseInt(document.getElementById('action-pin').value);
             let amount = parseFloat(document.getElementById('action-amount').value);
@@ -525,19 +499,24 @@
 
                 fetch(webAppUrl, {
                     method: "POST",
-                    mode: "no-cors",
                     body: JSON.stringify(updatePayload)
                 })
-                .then(() => {
-                    currentUser.Balance = expectedBalance;
-                    sessionStorage.setItem("activeUserSession", JSON.stringify(currentUser));
-                    
-                    msg.className = "status-msg success";
-                    msg.innerText = "✅ Confirmed! Cloud cell logs synchronized successfully. Resetting memory matrix...";
-                    
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
+                .then(res => res.json())
+                .then(response => {
+                    if (response.status === "success") {
+                        currentUser.Balance = expectedBalance;
+                        sessionStorage.setItem("activeUserSession", JSON.stringify(currentUser));
+                        
+                        msg.className = "status-msg success";
+                        msg.innerText = "✅ Confirmed! Cloud cell logs synchronized successfully. Resetting environment state...";
+                        
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        msg.className = "status-msg error";
+                        msg.innerText = "❌ Rejected by Cloud: " + response.message;
+                    }
                 })
                 .catch(() => {
                     msg.className = "status-msg error";
